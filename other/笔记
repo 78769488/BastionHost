@@ -1,0 +1,108 @@
+celery 分布式任务队列
+
+subprocess,
+logging
+张三
+
+集中式认证  ldap ad 域
+log_checker
+
+
+
+bbs  200
+张三   log_checker
+李四   mysql          30 mysql server
+王五   cluster    50 web server
+
+广告 500
+王五
+
+电商 300
+
+
+
+需求
+
+权限可控
+
+用户行为审计
+
+  rm
+  shutdown reboot init 6
+
+
+商业
+    齐治 堡垒机
+开源
+    jumpserver
+    crazyeye
+
+
+]
+
+
+chenronghua    192.68.1.10  root  123
+chenronghua    192.68.1.11  mysql
+zhaofan        192.68.1.10  root  123
+zhaofan         10.6.4.33   mysql
+zhaofan         10.6.4.33   web
+
+
+host
+  ip     hostname   port
+user_profile
+username    password
+remote_user
+username  password  auth_type
+root        abc      ssh-password
+mysql                ssh-key
+mysql       abc      ssh-password
+host_group
+name
+
+auditlog
+date    堡垒机用户   cmd    ip   remote_user
+
+]
+
+
+
+bj
+sh
+
+192.168.1.11
+192.168.1.12
+192.168.1.13
+
+
+bj 192.168.1.11 root
+sh 192.168.1.11 mysql
+sh 192.168.1.12
+log_team 192.168.1.11
+log_team 192.168.1.12
+log_team 192.168.1.13
+
+
+user_2_group
+zhao fan  bj
+
+
+192.168.1.11 root 123 bj
+192.168.1.11 mysql 123 sh
+192.168.1.11 web 123dfd gz
+
+
+user_profile
+
+
+未分组机器5台
+
+BJ[10]
+SH[36]
+
+=======
+GZ【100】
+Nj
+HK
+
+
