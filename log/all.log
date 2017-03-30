@@ -1,0 +1,62 @@
+[2017-03-30 16:31:33,570]-[MainThread:11656]-[task_id:modules.views]-[views.py:58]-[DEBUG]: source:
+{'user1': {'username': 'root', 'auth_type': 'ssh-password', 'password': 'alex!34321df'}, 'user3': {'username': 'alex', 'auth_type': 'ssh-password', 'password': 'alex3714'}, 'user0': {'username': 'root', 'auth_type': 'ssh-password', 'password': 'abc!23'}, 'user4': {'username': 'mysql', 'auth_type': 'ssh-password', 'password': '1qaz@WSX'}, 'user2': {'username': 'root', 'auth_type': 'ssh-key'}}
+[2017-03-30 16:31:33,570]-[MainThread:11656]-[task_id:modules.views]-[views.py:60]-[DEBUG]: user1:{'username': 'root', 'auth_type': 'ssh-password', 'password': 'alex!34321df'}
+[2017-03-30 16:31:33,595]-[MainThread:11656]-[task_id:modules.views]-[views.py:64]-[INFO]: root
+[2017-03-30 16:31:33,595]-[MainThread:11656]-[task_id:modules.views]-[views.py:60]-[DEBUG]: user3:{'username': 'alex', 'auth_type': 'ssh-password', 'password': 'alex3714'}
+[2017-03-30 16:31:33,596]-[MainThread:11656]-[task_id:modules.views]-[views.py:64]-[INFO]: alex
+[2017-03-30 16:31:33,596]-[MainThread:11656]-[task_id:modules.views]-[views.py:60]-[DEBUG]: user0:{'username': 'root', 'auth_type': 'ssh-password', 'password': 'abc!23'}
+[2017-03-30 16:31:33,596]-[MainThread:11656]-[task_id:modules.views]-[views.py:64]-[INFO]: root
+[2017-03-30 16:31:33,596]-[MainThread:11656]-[task_id:modules.views]-[views.py:60]-[DEBUG]: user4:{'username': 'mysql', 'auth_type': 'ssh-password', 'password': '1qaz@WSX'}
+[2017-03-30 16:31:33,597]-[MainThread:11656]-[task_id:modules.views]-[views.py:64]-[INFO]: mysql
+[2017-03-30 16:31:33,597]-[MainThread:11656]-[task_id:modules.views]-[views.py:60]-[DEBUG]: user2:{'username': 'root', 'auth_type': 'ssh-key'}
+[2017-03-30 16:31:33,597]-[MainThread:11656]-[task_id:modules.views]-[views.py:64]-[INFO]: root
+[2017-03-30 16:36:12,727]-[MainThread:5428]-[task_id:modules.views]-[views.py:19]-[INFO]: create tables sucess!
+[2017-03-30 16:38:31,353]-[MainThread:8364]-[task_id:modules.views]-[views.py:37]-[DEBUG]: source:
+{'server2': {'ip': '10.4.4.22'}, 'server1': {'port': 30000, 'ip': '192.168.2.100'}, 'test2': {'ip': '192.168.22.22'}, 'test1': {'ip': '192.168.11.11'}, 'ubuntu test': {'port': 22, 'ip': '192.168.2.243'}, 'test3': {'ip': '192.168.33.33'}}
+[2017-03-30 16:38:31,354]-[MainThread:8364]-[task_id:modules.views]-[views.py:39]-[DEBUG]: server2:{'ip': '10.4.4.22'}
+[2017-03-30 16:38:31,380]-[MainThread:8364]-[task_id:modules.views]-[views.py:41]-[INFO]: server2
+[2017-03-30 16:38:31,380]-[MainThread:8364]-[task_id:modules.views]-[views.py:39]-[DEBUG]: server1:{'port': 30000, 'ip': '192.168.2.100'}
+[2017-03-30 16:38:31,381]-[MainThread:8364]-[task_id:modules.views]-[views.py:41]-[INFO]: server1
+[2017-03-30 16:38:31,381]-[MainThread:8364]-[task_id:modules.views]-[views.py:39]-[DEBUG]: test2:{'ip': '192.168.22.22'}
+[2017-03-30 16:38:31,381]-[MainThread:8364]-[task_id:modules.views]-[views.py:41]-[INFO]: test2
+[2017-03-30 16:38:31,381]-[MainThread:8364]-[task_id:modules.views]-[views.py:39]-[DEBUG]: test1:{'ip': '192.168.11.11'}
+[2017-03-30 16:38:31,381]-[MainThread:8364]-[task_id:modules.views]-[views.py:41]-[INFO]: test1
+[2017-03-30 16:38:31,382]-[MainThread:8364]-[task_id:modules.views]-[views.py:39]-[DEBUG]: ubuntu test:{'port': 22, 'ip': '192.168.2.243'}
+[2017-03-30 16:38:31,382]-[MainThread:8364]-[task_id:modules.views]-[views.py:41]-[INFO]: ubuntu test
+[2017-03-30 16:38:31,382]-[MainThread:8364]-[task_id:modules.views]-[views.py:39]-[DEBUG]: test3:{'ip': '192.168.33.33'}
+[2017-03-30 16:38:31,382]-[MainThread:8364]-[task_id:modules.views]-[views.py:41]-[INFO]: test3
+[2017-03-30 16:38:31,471]-[MainThread:8364]-[task_id:modules.views]-[views.py:44]-[INFO]: create hosts sucess!
+[2017-03-30 16:39:55,221]-[MainThread:12536]-[task_id:modules.views]-[views.py:60]-[DEBUG]: source:
+{'user3': {'auth_type': 'ssh-password', 'username': 'alex', 'password': 'alex3714'}, 'user4': {'auth_type': 'ssh-password', 'username': 'mysql', 'password': '1qaz@WSX'}, 'user1': {'auth_type': 'ssh-password', 'username': 'root', 'password': 'alex!34321df'}, 'user2': {'auth_type': 'ssh-key', 'username': 'root'}, 'user0': {'auth_type': 'ssh-password', 'username': 'root', 'password': 'abc!23'}}
+[2017-03-30 16:39:55,222]-[MainThread:12536]-[task_id:modules.views]-[views.py:62]-[DEBUG]: user3:{'auth_type': 'ssh-password', 'username': 'alex', 'password': 'alex3714'}
+[2017-03-30 16:39:55,245]-[MainThread:12536]-[task_id:modules.views]-[views.py:66]-[INFO]: alex
+[2017-03-30 16:39:55,245]-[MainThread:12536]-[task_id:modules.views]-[views.py:62]-[DEBUG]: user4:{'auth_type': 'ssh-password', 'username': 'mysql', 'password': '1qaz@WSX'}
+[2017-03-30 16:39:55,245]-[MainThread:12536]-[task_id:modules.views]-[views.py:66]-[INFO]: mysql
+[2017-03-30 16:39:55,245]-[MainThread:12536]-[task_id:modules.views]-[views.py:62]-[DEBUG]: user1:{'auth_type': 'ssh-password', 'username': 'root', 'password': 'alex!34321df'}
+[2017-03-30 16:39:55,246]-[MainThread:12536]-[task_id:modules.views]-[views.py:66]-[INFO]: root
+[2017-03-30 16:39:55,246]-[MainThread:12536]-[task_id:modules.views]-[views.py:62]-[DEBUG]: user2:{'auth_type': 'ssh-key', 'username': 'root'}
+[2017-03-30 16:39:55,247]-[MainThread:12536]-[task_id:modules.views]-[views.py:66]-[INFO]: root
+[2017-03-30 16:39:55,247]-[MainThread:12536]-[task_id:modules.views]-[views.py:62]-[DEBUG]: user0:{'auth_type': 'ssh-password', 'username': 'root', 'password': 'abc!23'}
+[2017-03-30 16:39:55,247]-[MainThread:12536]-[task_id:modules.views]-[views.py:66]-[INFO]: root
+[2017-03-30 16:39:55,327]-[MainThread:12536]-[task_id:modules.views]-[views.py:69]-[INFO]: <sqlalchemy.orm.session.Session object at 0x038CF5D0>
+create remoteusers sucess!
+[2017-03-30 16:41:05,291]-[MainThread:11936]-[task_id:modules.views]-[views.py:86]-[DEBUG]: source:
+{'alex': {'password': 'alex123'}, 'test': {'password': 'test123'}, 'jack': {'password': 'jack123'}}
+[2017-03-30 16:41:05,292]-[MainThread:11936]-[task_id:modules.views]-[views.py:88]-[DEBUG]: alex:{'password': 'alex123'}
+[2017-03-30 16:41:05,316]-[MainThread:11936]-[task_id:modules.views]-[views.py:90]-[INFO]: alex
+[2017-03-30 16:41:05,317]-[MainThread:11936]-[task_id:modules.views]-[views.py:88]-[DEBUG]: test:{'password': 'test123'}
+[2017-03-30 16:41:05,317]-[MainThread:11936]-[task_id:modules.views]-[views.py:90]-[INFO]: test
+[2017-03-30 16:41:05,317]-[MainThread:11936]-[task_id:modules.views]-[views.py:88]-[DEBUG]: jack:{'password': 'jack123'}
+[2017-03-30 16:41:05,317]-[MainThread:11936]-[task_id:modules.views]-[views.py:90]-[INFO]: jack
+[2017-03-30 16:41:05,681]-[MainThread:11936]-[task_id:modules.views]-[views.py:102]-[INFO]: create user sucess!
+[2017-03-30 16:41:27,725]-[MainThread:9556]-[task_id:modules.views]-[views.py:118]-[DEBUG]: source:
+{'bj_group': {'user_profiles': ['alex', 'test']}, 'sh_group': {'user_profiles': ['jack', 'alex', 'test']}}
+[2017-03-30 16:41:27,726]-[MainThread:9556]-[task_id:modules.views]-[views.py:120]-[DEBUG]: bj_group:{'user_profiles': ['alex', 'test']}
+[2017-03-30 16:41:27,749]-[MainThread:9556]-[task_id:modules.views]-[views.py:122]-[INFO]: bj_group
+[2017-03-30 16:41:27,749]-[MainThread:9556]-[task_id:modules.views]-[views.py:120]-[DEBUG]: sh_group:{'user_profiles': ['jack', 'alex', 'test']}
+[2017-03-30 16:41:27,749]-[MainThread:9556]-[task_id:modules.views]-[views.py:122]-[INFO]: sh_group
+[2017-03-30 16:41:27,834]-[MainThread:9556]-[task_id:modules.views]-[views.py:133]-[INFO]: create groups sucess!
+[2017-03-30 16:41:39,985]-[MainThread:2996]-[task_id:modules.views]-[views.py:149]-[DEBUG]: source:
+{'bind2': {'groups': ['bj_group', 'sh_group'], 'user_profiles': ['rain'], 'hostname': 'server2', 'remote_users': [{'username': 'root', 'password': 'abc!23', 'auth_type': 'ssh-password', 'user1': None}]}, 'bind1': {'groups': ['bj_group'], 'user_profiles': ['alex', 'jack'], 'hostname': 'ubuntu test', 'remote_users': [{'username': 'root', 'auth_type': 'ssh-key', 'user1': None}, {'user2': None, 'username': 'alex', 'password': 'alex3714', 'auth_type': 'ssh-password'}]}}
+[2017-03-30 16:41:39,986]-[MainThread:2996]-[task_id:modules.views]-[views.py:151]-[DEBUG]: bind2:{'groups': ['bj_group', 'sh_group'], 'user_profiles': ['rain'], 'hostname': 'server2', 'remote_users': [{'username': 'root', 'password': 'abc!23', 'auth_type': 'ssh-password', 'user1': None}]}
+[2017-03-30 16:41:40,025]-[MainThread:2996]-[task_id:modules.views]-[views.py:155]-[DEBUG]: {'username': 'root', 'password': 'abc!23', 'auth_type': 'ssh-password', 'user1': None}
