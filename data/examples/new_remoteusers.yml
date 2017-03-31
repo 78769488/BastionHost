@@ -3,25 +3,19 @@
 user0:
   auth_type:  ssh-password
   username: root
-  password: abc!23
+  password: Bw$Testsup
 
 user1:
   auth_type:  ssh-password
   username: root
-  password: alex!34321df
+  password: ydyy$Lsup
+#
+#user2:
+#  auth_type:  ssh-key
+#  username: root
+#  #password: abc!23
 
 user2:
-  auth_type:  ssh-key
-  username: root
-  #password: abc!23
-
-user3:
   auth_type:  ssh-password
-  username: alex
-  password: alex3714
-
-
-user4:
-  auth_type:  ssh-password
-  username: mysql
-  password: 1qaz@WSX
+  username: bwtest
+  password: Bewinner

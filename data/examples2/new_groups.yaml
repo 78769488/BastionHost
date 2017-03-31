@@ -7,7 +7,7 @@ bj_group:
     - alex
     - test
 
-bst_group:
+sh_group:
   user_profiles:
     - jack
     - alex

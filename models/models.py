@@ -119,15 +119,15 @@ class AuditLog(Base):
     cmd = Column(String(255))
     date = Column(DATETIME)
 
-    user_profile = relationship("UserProfile")  # 不需要反查关系
-    bind_host = relationship("BindHost")
+    user_profile = relationship("UserProfile", backref="audit_logs")
+    bind_host = relationship("BindHost", backref="audit_logs")
 
-    def __repr__(self):
-        return "<user=%s,host=%s,action=%s,cmd=%s,date=%s>" % (self.user_profile.username,
-                                                               self.bind_host.host.hostname,
-                                                               self.action_type,
-                                                               self.cmd,
-                                                               self.date)
+    # def __repr__(self):
+    #     return "<user=%s,host=%s,action=%s,cmd=%s,date=%s>" % (self.user_profile.username,
+    #                                                            self.bind_host.host.hostname,
+    #                                                            self.action_type,
+    #                                                            self.cmd,
+    #                                                            self.date)
 
 
 if __name__ == "__main__":

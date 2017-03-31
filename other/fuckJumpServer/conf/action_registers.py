@@ -12,6 +12,5 @@ actions = {
     'create_hosts': views.create_hosts,
     'create_bindhosts': views.create_bindhosts,
     'create_remoteusers': views.create_remoteusers,
-    'audit':views.log_audit
-
+    'audit': views.log_recording,
 }

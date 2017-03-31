@@ -28,7 +28,7 @@ def create_hosts(argvs):
     :return:
     """
     if '-f' in argvs:
-        hosts_file = argvs[argvs.index("-f") +1 ]
+        hosts_file = argvs[argvs.index("-f") + 1]
     else:
         print_err("invalid usage, should be:\ncreate_hosts -f <the new hosts file>", logout=True)
         return
@@ -136,6 +136,7 @@ def create_groups(argvs):
 def create_bindhosts(argvs):
     """
     create bind hosts
+    主机及该主机上的账户信息
     :param argvs:
     :return:
     """
@@ -149,10 +150,11 @@ def create_bindhosts(argvs):
         logger.debug("source:\n%s" % source)
         for key, val in source.items():
             logger.debug("%s:%s" % (key, val))
-            # 获取要Bind的主机信息
+            # 要Bind的主机信息
             host_obj = session.query(models.Host).filter(models.Host.hostname == val.get('hostname')).first()
+            logger.debug("host_obj---\n%s" % host_obj)
             assert host_obj
-            for item in val['remote_users']:  # 获取该主机上的账户信息
+            for item in val['remote_users']:  # 要bind到该主机上的账户信息
                 logger.debug(item)
                 assert item.get('auth_type')
                 if item.get('auth_type') == 'ssh-password':
@@ -166,24 +168,24 @@ def create_bindhosts(argvs):
                         models.RemoteUser.auth_type == item.get('auth_type'),
                     ).first()
                 if not remoteuser_obj:
-                    logger.error()
                     print_err("RemoteUser obj %s does not exist." % item, logout=True)
-                bindhost_obj = models.BindHost(host_id=host_obj.id, remoteuser_id=remoteuser_obj.id)
+                bindhost_obj = models.BindHost(host_id=host_obj.id, remoteuser_id=remoteuser_obj.id)  # 设定bind关系
                 session.add(bindhost_obj)
-                # for groups this host binds to
+                # for groups this host binds to 该主机bind到主机组
                 if source[key].get('groups'):
                     group_objs = session.query(models.HostGroup).filter(
                         models.HostGroup.name.in_(source[key].get('groups'))).all()
                     assert group_objs
-                    print('groups:', group_objs)
+                    logger.info('groups:%s' % group_objs)
                     bindhost_obj.host_groups = group_objs
-                # for user_profiles this host binds to
+                # for user_profiles this host binds to  该主机bind到的用户
                 if source[key].get('user_profiles'):
                     userprofile_objs = session.query(models.UserProfile).filter(models.UserProfile.username.in_(
                         source[key].get('user_profiles')
                     )).all()
+                    logger.debug(userprofile_objs)
                     assert userprofile_objs
-                    print("userprofiles:", userprofile_objs)
+                    logger.info("userprofiles:%s" % userprofile_objs)
                     bindhost_obj.user_profiles = userprofile_objs
                     # print(bindhost_obj)
         session.commit()
@@ -195,8 +197,8 @@ def start_session(argvs):
     user = auth()  # 用户登录堡垒机
     if user:
         welcome_msg(user)
-        print(user.bind_hosts)  # 用户管理的主机
-        print(user.host_groups)  # 用户管理的主机组
+        # print(user.bind_hosts)  # 用户管理的主机
+        # print(user.host_groups)  # 用户管理的主机组
         exit_flag = False
         while not exit_flag:
             if user.bind_hosts:
@@ -216,6 +218,26 @@ def start_session(argvs):
                                                 bind_host.host.ip,
                                                 ))
                 print("----------- END -----------")
+
+                # host selection
+                while not exit_flag:
+                    user_option = input("[(b)back, (q)quit, select host to login]:").strip()  # 选择主机进行操作
+                    if len(user_option) == 0:
+                        continue
+                    if user_option == 'b':
+                        break
+                    if user_option == 'q':
+                        exit_flag = True
+                    if user_option.isdigit():
+                        user_option = int(user_option)
+                        if user_option < len(user.bind_hosts):
+                            print('host:', user.bind_hosts[user_option])
+                            print('audit log:', user.bind_hosts[user_option].audit_logs)
+                            ssh_login.ssh_login(user,  # 堡垒机用户信息
+                                                user.bind_hosts[user_option],
+                                                session,
+                                                log_recording)
+
             elif choice.isdigit():
                 choice = int(choice)
                 if choice < len(user.host_groups):  # 分组的主机信息
@@ -242,25 +264,27 @@ def start_session(argvs):
                             if user_option < len(user.host_groups[choice].bind_hosts):
                                 print('host:', user.host_groups[choice].bind_hosts[user_option])
                                 print('audit log:', user.host_groups[choice].bind_hosts[user_option].audit_logs)
-                                ssh_login.ssh_login(user,
+                                ssh_login.ssh_login(user,  # 堡垒机用户信息
                                                     user.host_groups[choice].bind_hosts[user_option],
                                                     session,
                                                     log_recording)
-                else:
-                    print("no this option..")
+        else:
+            print("no this option..")
 
 
 def auth():
-    '''
+    """
     do the user login authentication
     :return:
-    '''
+    """
     count = 0
     while count < 3:
         username = input("\033[32;1mUsername:\033[0m").strip()
-        if len(username) == 0: continue
+        if len(username) == 0:
+            continue
         password = input("\033[32;1mPassword:\033[0m").strip()
-        if len(password) == 0: continue
+        if len(password) == 0:
+            continue
         user_obj = session.query(models.UserProfile).filter(models.UserProfile.username == username,
                                                             models.UserProfile.password == password).first()
         if user_obj:
@@ -280,8 +304,8 @@ def log_recording(user_obj, bind_host_obj, logs):
     :param logs: list format [logItem1,logItem2,...]
     :return:
     """
-    print("\033[41;1m--logs:\033[0m",logs)
 
+    print("\033[41;1m--logs:\033[0m", logs)
     session.add_all(logs)
     session.commit()
 

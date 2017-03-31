@@ -18,6 +18,7 @@
 
 import sys
 import time
+import redis
 import socket
 import datetime
 from paramiko.py3compat import u
@@ -32,6 +33,11 @@ try:
 except ImportError as e:
     print(e)
     has_termios = False
+
+redis_db = "audit_log"
+pool = redis.ConnectionPool(host='127.0.0.1', port=6379)
+
+my_redis = redis.Redis(connection_pool=pool)
 
 
 def interactive_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording):
@@ -53,6 +59,7 @@ def posix_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording):
     import select
     t1 = time.time()
     oldtty = termios.tcgetattr(sys.stdin)  # 获取终端属性
+
     try:
         tty.setraw(sys.stdin.fileno())
         tty.setcbreak(sys.stdin.fileno())
@@ -90,20 +97,22 @@ def posix_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording):
                                                cmd=cmd,
                                                date=datetime.datetime.now()
                                                )
-                    cmd_caches.append(log_item)
-                    cmd = ''
+                    my_redis.rpush("audit_log", log_item)
 
-                    if len(cmd_caches) >= 10:
-                        log_recording(user_obj, bind_host_obj, cmd_caches)
-                        cmd_caches = []
-                        t1 = time.time()
-
-                    elif len(cmd_caches) >= 1:
-                        t2 = time.time()
-                        if t2 - t1 > 60:  # 如果超过程60秒, 指令队列中仍然有数据, 就写数据库,
-                            log_recording(user_obj, bind_host_obj, cmd_caches)
-                            cmd_caches = []
-                            t1 = time.time()
+                    # cmd_caches.append(log_item)
+                    # cmd = ''
+                    #
+                    # if len(cmd_caches) >= 10:
+                    #     log_recording(user_obj, bind_host_obj, cmd_caches)
+                    #     cmd_caches = []
+                    #     t1 = time.time()
+                    #
+                    # elif len(cmd_caches) >= 1:
+                    #     t2 = time.time()
+                    #     if t2 - t1 > 60:  # 如果超过程60秒, 指令队列中仍然有数据, 就写数据库,
+                    #         log_recording(user_obj, bind_host_obj, cmd_caches)
+                    #         cmd_caches = []
+                    #         t1 = time.time()
 
                 if '\t' == x:
                     tab_key = True
@@ -132,8 +141,28 @@ def windows_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording):
             sys.stdout.write(data.decode())
             sys.stdout.flush()
 
+    def write_log():
+        print("write_log.....")
+        while True:
+            if my_redis.llen(redis_db) >= 10:
+                items = my_redis.lrange(redis_db, 0, 10)
+                log_recording(user_obj, bind_host_obj, items)
+                my_redis.save()  # 保存一次数据
+            elif my_redis.llen(redis_db) > 1:
+                now = datetime.datetime.now()
+                last = my_redis.lastsave()
+                diff = (now - last).seconds
+                print("diff.....", diff)
+                if diff > 60:
+                    items = my_redis.lrange(redis_db, 0, 10)
+                    log_recording(user_obj, bind_host_obj, items)
+                    my_redis.save()  # 保存一次数据
+
     writer = threading.Thread(target=writeall, args=(chan,))
     writer.start()
+    write_log = threading.Thread(target=write_log, args=())
+    write_log.start()
+
 
     try:
         cmd = ""
@@ -150,7 +179,7 @@ def windows_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording):
                                            cmd=cmd,
                                            date=datetime.datetime.now()
                                            )
-                cmd_caches.append(log_item)
+                my_redis.rpush("audit_log", log_item)
                 cmd = ""
 
                 if len(cmd_caches) >= 10:

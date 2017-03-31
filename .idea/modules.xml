@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/BastionHost.iml" filepath="$PROJECT_DIR$/.idea/BastionHost.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../ahkx/.idea/ahkx.iml" filepath="$PROJECT_DIR$/../../ahkx/.idea/ahkx.iml" />
     </modules>
   </component>
 </project>
