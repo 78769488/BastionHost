@@ -1,5 +1,5 @@
-#_*_coding:utf-8_*_
-__author__ = 'Alex Li'
+#!/usr/bin/env python
+# -*- coding=utf-8 -*-
 
 from modules import views
 
@@ -12,5 +12,5 @@ actions = {
     'create_hosts': views.create_hosts,
     'create_bindhosts': views.create_bindhosts,
     'create_remoteusers': views.create_remoteusers,
-    'audit': views.log_recording,
+    'audit_user': views.log_recording,
 }

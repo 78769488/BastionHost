@@ -1,0 +1,5 @@
+[2017-04-01 15:07:34,009]-[MainThread:3088]-[task_id:modules.utils]-[utils.py:19]-[ERROR]: Command [audit_recording] does not exist!
+[2017-04-01 15:08:33,654]-[MainThread:9284]-[task_id:modules.utils]-[utils.py:19]-[ERROR]: Command [audit_recording] does not exist!
+[2017-04-01 15:08:50,415]-[MainThread:4904]-[task_id:modules.utils]-[utils.py:19]-[ERROR]: Command [audit_recording] does not exist!
+[2017-04-01 15:11:07,176]-[MainThread:11252]-[task_id:modules.utils]-[utils.py:19]-[ERROR]: Command [audit_user] does not exist!
+[2017-04-01 15:54:46,813]-[MainThread:5728]-[task_id:modules.utils]-[utils.py:19]-[ERROR]: Wrong username...

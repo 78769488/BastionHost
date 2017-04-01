@@ -1,18 +1,12 @@
 
-bj_group:
-  #bind_hosts:
-  #  - h1
-  #  - h2
+web_devteam:
+#  bind_hosts:
+#    - server1
+#    - server2
   user_profiles:
     - alex
-    - test
+    - rain
 
-bst_group:
-  user_profiles:
-    - jack
-    - alex
-    - test
 
-# test_group:
 
 

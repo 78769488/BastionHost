@@ -1,5 +1,5 @@
 
-
+# 设置堡垒机用户信息
 alex:
   password: alex123
   #groups:

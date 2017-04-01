@@ -7,6 +7,8 @@
 import os
 
 DB_CONN = "mysql+pymysql://root:bewinner@127.0.0.1/bastion_host?charset=utf8"
+REDIS_HOST = "127.0.0.1"
+REDIS_PORT = 6379
 
 # 打印到屏幕的日志级别
 LEVEL_CONSOLE = "DEBUG"

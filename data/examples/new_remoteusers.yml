@@ -1,4 +1,4 @@
-
+# 设置服务器登录账户信息
 
 user0:
   auth_type:  ssh-password

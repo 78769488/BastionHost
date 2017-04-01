@@ -33,18 +33,17 @@ def ssh_login(user_obj, bind_host_obj, mysql_engine, log_recording):
                        bind_host_obj.remote_user.password,
                        timeout=30)
 
-        cmd_caches = []
+        # cmd_caches = []
         chan = client.invoke_shell()  # Start an interactive shell session on the SSH server.
         print(repr(client.get_transport()))
         print('*** Here we go!\n')
-        cmd_caches.append(models.AuditLog(user_id=user_obj.id,
-                                          bind_host_id=bind_host_obj.id,
-                                          action_type='login',
-                                          date=datetime.datetime.now()
-                                          ))  # 设定AuditLog表中各字段值
-        log_recording(user_obj, bind_host_obj, cmd_caches)
-        cmd_caches = []
-        interactive.interactive_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording)
+        log_item = models.AuditLog(user_id=user_obj.id,
+                                  bind_host_id=bind_host_obj.id,
+                                  action_type='login',
+                                  date=datetime.datetime.now()
+                                  )  # 设定AuditLog表中各字段值
+        log_recording(log_item)
+        interactive.interactive_shell(chan, user_obj, bind_host_obj, log_recording)
         chan.close()
         client.close()
 

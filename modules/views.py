@@ -1,15 +1,11 @@
 #!/usr/bin/env python
 # -*- coding=utf-8 -*-
 
-import logging
-from modules import custom_logging
+from pylsy import pylsytable
 from models import models
-from conf import settings
-from modules.utils import print_err, yaml_parser
+from modules.utils import print_err, yaml_parser, logger
 from modules.db_conn import engine, session
-from modules import ssh_login
-
-logger = logging.getLogger(__name__)
+from modules import ssh_login, common_filters
 
 
 def syncdb(argvs):
@@ -120,14 +116,13 @@ def create_groups(argvs):
             logger.debug("%s:%s" % (key, val))
             obj = models.HostGroup(name=key)
             logger.info(obj)
-            # 简化.yaml数据结构,复杂关联关系单独处理
             # if val.get('bind_hosts'):
             #     bind_hosts = common_filters.bind_hosts_filter(val)
             #     obj.bind_hosts = bind_hosts
             #
-            # if val.get('user_profiles'):
-            #     user_profiles = common_filters.user_profiles_filter(val)
-            #     obj.user_profiles = user_profiles
+            if val.get('user_profiles'):  # 用户与主机分组关系
+                user_profiles = common_filters.user_profiles_filter(val)
+                obj.user_profiles = user_profiles
             session.add(obj)
         session.commit()
         logger.info("create groups sucess!")
@@ -296,18 +291,68 @@ def auth():
         print_err("too many attempts.")
 
 
-def log_recording(user_obj, bind_host_obj, logs):
+def log_recording(logs):
     """
     flush user operations on remote host into DB
-    :param user_obj:
-    :param bind_host_obj:
     :param logs: list format [logItem1,logItem2,...]
     :return:
     """
 
     print("\033[41;1m--logs:\033[0m", logs)
-    session.add_all(logs)
+    # session.add_all(logs)
+    session.add(logs)
     session.commit()
+
+
+def audit_recording(argvs):
+    """
+    audit users records
+    :param argvs:
+    :return:
+    """
+    if '-u' in argvs:
+        user_name = argvs[argvs.index("-u") + 1]
+    else:
+        print_err("invalid usage, should be:\naudit_user -u <username>", logout=True)
+        return
+    # records = session.query(models.AuditLog).filter(
+    #     models.AuditLog.user_id == (
+    #         session.query(models.UserProfile.id).filter_by(username=user_name).first())).all().order_by(id).desc()
+    user_profile = session.query(models.UserProfile).filter_by(username=user_name).first()
+    if not user_profile:
+        print_err("Wrong username...", logout=True)
+    records = user_profile.audit_logs
+    logger.info(records)
+    msg = '''\033[32;1m
+    ---------------------------------------All records of [%s] ---------------------------------------
+    \033[0m''' % user_name
+    print(msg)
+    if records:
+        attributes = ["UserName", "HostName", "IP", "Port", "RemoteUser", "ActionType", "CMD", "DateTime"]
+        table = pylsytable(attributes)
+        for record in records:
+            # record_list = [user_name,
+            #                records[0].bind_host.host.hostname,
+            #                records[0].bind_host.host.ip,
+            #                records[0].bind_host.host.port,
+            #                records[0].bind_host.remote_user,
+            #                record.action_type.value,
+            #                record.cmd,
+            #                record.date
+            #                ]
+            # print(record_list)
+            # table.append_data(attributes, record_list)
+            table.append_data("UserName", user_name)
+            table.append_data("HostName", records[0].bind_host.host.hostname)
+            table.append_data("IP", records[0].bind_host.host.ip)
+            table.append_data("Port", records[0].bind_host.host.port)
+            table.append_data("RemoteUser", records[0].bind_host.remote_user)
+            table.append_data("ActionType", record.action_type.value)
+            table.append_data("CMD", record.cmd)
+            table.append_data("DateTime", record.date)
+        logger.info(table)
+    else:
+        print("No records for %s" % user_name)
 
 
 def welcome_msg(user):

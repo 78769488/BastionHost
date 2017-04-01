@@ -17,48 +17,48 @@
 # 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 import sys
+import json
 import time
-import redis
 import socket
+import platform
 import datetime
+import threading
 from paramiko.py3compat import u
 from models import models
+from modules.db_conn import redis_log
 
-# windows does not have termios...
-try:
-    import termios
-    import tty
-
-    has_termios = True
-except ImportError as e:
-    print(e)
+log_2_redis = "audit_log"
+os_type = platform.system()
+if os_type == "Windows":
     has_termios = False
+elif os_type == "Linux":
+    import termios  # windows does not have termios...
+    import tty
+    has_termios = True
+else:
+    print("system/OS name is:", os_type)
 
-redis_db = "audit_log"
-pool = redis.ConnectionPool(host='127.0.0.1', port=6379)
 
-my_redis = redis.Redis(connection_pool=pool)
-
-
-def interactive_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording):
+def interactive_shell(chan, user_obj, bind_host_obj, log_recording):
     """
     :param chan: interactive shell
     :param user_obj: object of login user
     :param bind_host_obj: object of login host
-    :param cmd_caches: argvs for write to audit_log table
     :param log_recording: log_recording func
     :return:
     """
     if has_termios:
-        posix_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording)
+        posix_shell(chan, user_obj, bind_host_obj, log_recording)
     else:
-        windows_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording)
+        windows_shell(chan, user_obj, bind_host_obj, log_recording)
 
 
-def posix_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording):
+def posix_shell(chan, user_obj, bind_host_obj, log_recording):
     import select
-    t1 = time.time()
     oldtty = termios.tcgetattr(sys.stdin)  # 获取终端属性
+
+    write_log = threading.Thread(target=write_logs, args=(user_obj, bind_host_obj, log_recording,))
+    write_log.start()
 
     try:
         tty.setraw(sys.stdin.fileno())
@@ -89,30 +89,11 @@ def posix_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording):
                 if '\r' != x:
                     cmd += x
                 else:  # "\r" 用户按了"Enter"键,指令结束
-
                     print('cmd->:', cmd)
-                    log_item = models.AuditLog(user_id=user_obj.id,
-                                               bind_host_id=bind_host_obj.id,
-                                               action_type='cmd',
-                                               cmd=cmd,
-                                               date=datetime.datetime.now()
-                                               )
-                    my_redis.rpush("audit_log", log_item)
-
-                    # cmd_caches.append(log_item)
-                    # cmd = ''
-                    #
-                    # if len(cmd_caches) >= 10:
-                    #     log_recording(user_obj, bind_host_obj, cmd_caches)
-                    #     cmd_caches = []
-                    #     t1 = time.time()
-                    #
-                    # elif len(cmd_caches) >= 1:
-                    #     t2 = time.time()
-                    #     if t2 - t1 > 60:  # 如果超过程60秒, 指令队列中仍然有数据, 就写数据库,
-                    #         log_recording(user_obj, bind_host_obj, cmd_caches)
-                    #         cmd_caches = []
-                    #         t1 = time.time()
+                    log_dic = dict(action_type='cmd', cmd=cmd,
+                                   date=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                    dic_2_json = json.dumps(log_dic)
+                    redis_log.lpush(log_2_redis, dic_2_json)
 
                 if '\t' == x:
                     tab_key = True
@@ -125,9 +106,7 @@ def posix_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording):
 
 
 # thanks to Mike Looijmans for this code
-def windows_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording):
-    import threading
-    t1 = time.time()  # 记录当前时间
+def windows_shell(chan, user_obj, bind_host_obj, log_recording):
 
     sys.stdout.write("Line-buffered terminal emulation. Press F6 or ^Z to send EOF.\r\n\r\n")
 
@@ -141,28 +120,10 @@ def windows_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording):
             sys.stdout.write(data.decode())
             sys.stdout.flush()
 
-    def write_log():
-        print("write_log.....")
-        while True:
-            if my_redis.llen(redis_db) >= 10:
-                items = my_redis.lrange(redis_db, 0, 10)
-                log_recording(user_obj, bind_host_obj, items)
-                my_redis.save()  # 保存一次数据
-            elif my_redis.llen(redis_db) > 1:
-                now = datetime.datetime.now()
-                last = my_redis.lastsave()
-                diff = (now - last).seconds
-                print("diff.....", diff)
-                if diff > 60:
-                    items = my_redis.lrange(redis_db, 0, 10)
-                    log_recording(user_obj, bind_host_obj, items)
-                    my_redis.save()  # 保存一次数据
-
     writer = threading.Thread(target=writeall, args=(chan,))
     writer.start()
-    write_log = threading.Thread(target=write_log, args=())
+    write_log = threading.Thread(target=write_logs, args=(user_obj, bind_host_obj, log_recording,))
     write_log.start()
-
 
     try:
         cmd = ""
@@ -172,31 +133,30 @@ def windows_shell(chan, user_obj, bind_host_obj, cmd_caches, log_recording):
                 break
 
             if d.endswith("\n"):  # 读取到"\n"(包含"\r\n")时, 用户按下了回车键"Enter",输入指令结束
-                print("cmd--->:", cmd)
-                log_item = models.AuditLog(user_id=user_obj.id,
-                                           bind_host_id=bind_host_obj.id,
-                                           action_type='cmd',
-                                           cmd=cmd,
-                                           date=datetime.datetime.now()
-                                           )
-                my_redis.rpush("audit_log", log_item)
+                log_dic = dict(action_type='cmd',
+                               cmd=cmd,
+                               date=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                dic_2_json = json.dumps(log_dic)
+                redis_log.lpush(log_2_redis, dic_2_json)
                 cmd = ""
-
-                if len(cmd_caches) >= 10:
-                    log_recording(user_obj, bind_host_obj, cmd_caches)
-                    cmd_caches = []
-                    t1 = time.time()
-
-                elif len(cmd_caches) >= 1:
-                    t2 = time.time()
-                    if t2 - t1 > 60:  # 如果超过程60秒, 指令队列中仍然有数据, 就写数据库,
-                        log_recording(user_obj, bind_host_obj, cmd_caches)
-                        cmd_caches = []
-                        t1 = time.time()
-
             else:
                 cmd += d
             chan.send(d)  # 向chan管道发送指令
     except EOFError:
         # user hit ^Z or F6
         pass
+
+
+def write_logs(user_obj, bind_host_obj, log_recording):
+    while True:
+        item = redis_log.brpop(log_2_redis, 1)  # 如果"log_2_redis"中没有数据, 等待1秒
+        if item:
+            json_2_dic = json.loads(item[1].decode(), encoding="utf-8")
+            log_item = models.AuditLog(user_id=user_obj.id,
+                                       bind_host_id=bind_host_obj.id,
+                                       action_type=json_2_dic.get("action_type", "cmd"),
+                                       cmd=json_2_dic.get("cmd", None),
+                                       date=json_2_dic.get("date", None)
+                                       )
+            log_recording(log_item)
+

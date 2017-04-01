@@ -1,9 +1,10 @@
+# 设置服务器IP Port
 
-BST BAK:
+bak_host:
   ip: 114.247.144.209
   port: 65062
 
-test1:
+server1:
   ip: 120.26.162.19
   port: 65062
 

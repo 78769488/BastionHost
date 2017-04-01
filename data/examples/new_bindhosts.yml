@@ -1,7 +1,7 @@
 
 
 bind1:
-  hostname: test1
+  hostname: server1
   remote_users:
     - user1:
       username: root
@@ -12,21 +12,21 @@ bind1:
       auth_type: ssh-password
       password: Bewinner
   groups:
-    - bj_group
+    - web_devteam
   user_profiles:
     - alex
     - jack
 
 bind2:
-  hostname: BST BAK
+  hostname: server2
   remote_users:
     - user1:
       username: root
       auth_type: ssh-password
       password: ydyy$Lsup
   groups:
-    - bj_group
-    - sh_group
+    - web_devteam
 
   user_profiles:
-    - rain
+    - alex
+    - jack

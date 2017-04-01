@@ -28,7 +28,7 @@ level_files = settings.LEVEL_FILES if settings.LEVEL_FILES else 'INFO'
 standard_format = '[%(asctime)s]-[%(threadName)s:%(thread)d]-[task_id:%(name)s]-[%(filename)s:%(lineno)d]' \
                   '-[%(levelname)s]: %(message)s'
 # simple_format = '[%(levelname)s][%(asctime)s][%(filename)s:%(lineno)d]: %(message)s'
-simple_format = '[%(asctime)s-%(filename)s:%(lineno)d]] %(message)s'
+simple_format = '[%(asctime)s-%(filename)s:%(lineno)d] %(message)s'
 
 # log配置字典
 logging_dic = {
